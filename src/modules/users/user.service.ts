@@ -19,7 +19,7 @@ export class UsersService {
     return this.userRepo.findOne({ where: { email } });
   }
 
-  async findById(id: number): Promise<User | null> {
+  async findById(id: string): Promise<User | null> {
     return this.userRepo.findOne({ where: { id } });
   }
 

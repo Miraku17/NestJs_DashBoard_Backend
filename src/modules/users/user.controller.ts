@@ -15,6 +15,6 @@ export class UsersController {
   // GET /users/:id
   @Get(':id')
   findOne(@Param('id') id: string): Promise<User | null> {
-    return this.usersService.findById(+id);
+    return this.usersService.findById(id);
   }
 }

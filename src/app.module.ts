@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-// import { UsersModule } from './modules/users/user.module';
+import { UsersModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { User } from './modules/users/user.entity';
 
@@ -24,7 +24,7 @@ import { User } from './modules/users/user.entity';
     }),
 
     // Feature modules
-    // UsersModule,
+    UsersModule,
     AuthModule,
   ],
   controllers: [AppController],
