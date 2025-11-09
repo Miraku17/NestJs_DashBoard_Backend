@@ -13,60 +13,87 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  // 🔹 Register a new user
   async register(registerDto: RegisterDto) {
-    const existingUser = await this.usersService.findByEmail(registerDto.email);
-    if (existingUser) throw new UnauthorizedException('User with this email already exists');
+    const existingUser = await this.usersService.findByUsername(registerDto.username);
+    if (existingUser) throw new UnauthorizedException('Username already taken');
 
+    // Hash password before saving
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
+    // Create user in DB
     const newUser = await this.usersService.create({
-      ...registerDto,
+      firstName: registerDto.firstName,
+      lastName: registerDto.lastName,
+      username: registerDto.username,
+      email: registerDto.email,
+      address: registerDto.address,
+      phone: registerDto.phone,
       password: hashedPassword,
     });
 
+    // Map to DTO
     const userDto: UserDto = {
       id: newUser.id,
-      name: newUser.name,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      username: newUser.username,
       email: newUser.email,
+      address: newUser.address,
+      phone: newUser.phone,
     };
 
+    // Generate token
     const token = this.generateToken(userDto);
 
     return { user: userDto, access_token: token };
   }
 
+  // 🔹 Login existing user
   async login(loginDto: LoginDto) {
-    // Fetch full entity (includes password)
-    const user = await this.usersService.findByEmail(loginDto.email);
+    const user = await this.usersService.findByUsername(loginDto.username);
     if (!user) throw new UnauthorizedException('Invalid credentials');
-  
-    // Compare hashed password
+
     const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
     if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
-  
-    // Map to DTO before returning
+
     const userDto: UserDto = {
       id: user.id,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
       email: user.email,
+      address: user.address,
+      phone: user.phone,
     };
-  
+
     const token = this.generateToken(userDto);
-  
     return { user: userDto, access_token: token };
   }
-  
-  
 
+  // 🔹 Validate user from JWT payload
   async validateUser(payload: any): Promise<UserDto> {
     const user = await this.usersService.findById(payload.sub);
     if (!user) throw new UnauthorizedException('Invalid token');
 
-    return { id: user.id, name: user.name, email: user.email };
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      email: user.email,
+      address: user.address,
+      phone: user.phone,
+    };
   }
 
+  // 🔹 Generate JWT
   private generateToken(user: UserDto): string {
-    const payload = { email: user.email, sub: user.id, roles: ['user'] };
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      roles: ['user'],
+    };
     return this.jwtService.sign(payload);
   }
 }

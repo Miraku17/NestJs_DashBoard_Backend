@@ -5,8 +5,21 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ unique: true })
+  username: string;
+
   @Column()
-  name: string;
+  firstName: string;
+
+  @Column()
+  lastName: string;
+
+  @Column()
+  address: string;
+
+  @Column()
+  phone: string;
+
 
   @Column({ unique: true })
   email: string;

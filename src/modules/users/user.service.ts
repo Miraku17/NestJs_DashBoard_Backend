@@ -19,6 +19,11 @@ export class UsersService {
     return this.userRepo.findOne({ where: { email } });
   }
 
+  async findByUsername(username:string): Promise<User | null> {
+    return this.userRepo.findOne({ where: { username } });
+
+  }
+
   async findById(id: string): Promise<User | null> {
     return this.userRepo.findOne({ where: { id } });
   }
@@ -26,9 +31,13 @@ export class UsersService {
   async findAll(): Promise<UserDto[]> {
     const users = await this.userRepo.find();
     return users.map(user => ({
-      id: user.id,
-      name: user.name,
-      email: user.email,
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        email: user.email,
+        address: user.address,
+        phone: user.phone,
     }));
   }
 }
