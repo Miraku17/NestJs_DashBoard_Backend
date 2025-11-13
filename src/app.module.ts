@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 import { UsersModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -20,6 +21,8 @@ import { Company } from './modules/companies/company.entity';
 import { CompanyForm } from './modules/company-forms/company-forms.entity';
 import { Form } from './modules/forms/forms.entity';
 
+import { ApiKeyGuard } from './guards/api.key.guard';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -34,12 +37,10 @@ import { Form } from './modules/forms/forms.entity';
       },
     }),
 
-
     ThrottlerModule.forRoot({
       ttl: 60,
       limit: 10,
     } as any),
-    
 
     UsersModule,
     AuthModule,
@@ -50,6 +51,12 @@ import { Form } from './modules/forms/forms.entity';
     FormsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ApiKeyGuard, 
+    },
+  ],
 })
 export class AppModule {}
