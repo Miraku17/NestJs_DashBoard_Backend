@@ -4,9 +4,8 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
 } from 'typeorm';
-import { Form } from '../forms/forms.entity';
+
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -32,10 +31,6 @@ export class User {
 
   @Column()
   password: string;
-
-  // ✅ Relationship: one user can create many forms
-  @OneToMany(() => Form, (form) => form.user)
-  forms: Form[];
 
   // ✅ Auto timestamps for auditing
   @CreateDateColumn({

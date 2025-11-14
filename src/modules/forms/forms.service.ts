@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Form } from './forms.entity';
 import { CreateFormDto } from './dto/create-form.dto';
 import { Company } from '../companies/company.entity';
 import { CompanyForm } from '../company-forms/company-forms.entity';
 import { Engine } from '../products/deutz/engine.entity';
-import { User } from '../users/user.entity';
+import { Customer } from '../customer/customer.entity';
 
 @Injectable()
 export class FormsService {
@@ -23,40 +23,32 @@ export class FormsService {
     @InjectRepository(Engine)
     private readonly engineRepository: Repository<Engine>,
 
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(Customer)
+    private readonly customerRepository: Repository<Customer>,
   ) {}
 
   // ✅ Create a new form with auto-generated job order
   async create(dto: CreateFormDto): Promise<Form> {
-    const [company, companyForm, engine, user] = await Promise.all([
-      this.companyRepository.findOne({ where: { id: dto.companyId } }),
+    const [companyForm, engine, customer] = await Promise.all([
       this.companyFormRepository.findOne({ where: { id: dto.companyFormId } }),
       this.engineRepository.findOne({ where: { id: dto.engineId } }),
-      this.userRepository.findOne({ where: { id: dto.userId } }),
+      this.customerRepository.findOne({ where: { id: dto.customerId } }),
     ]);
 
-    if (!company) throw new NotFoundException('Company not found');
     if (!companyForm) throw new NotFoundException('CompanyForm template not found');
     if (!engine) throw new NotFoundException('Engine not found');
-    if (!user) throw new NotFoundException('User not found');
+    if (!customer) throw new NotFoundException('Customer not found');
 
     const form = this.formRepository.create({
-      company,
-      company_id: company.id,
+      company: companyForm.company, // company derived from the template
       companyForm,
-      company_form_id: companyForm.id,
       engine,
-      engine_id: engine.id,
-      user,
-      user_id: user.id,
-      formType: dto.formType,
+      customer,
       data: dto.data,
-      remarks: dto.remarks,
     });
 
     // Generate job order using company prefix
-    form.job_order = await this.generateJobOrder(company.name);
+    form.job_order = await this.generateJobOrder(form.company.name);
 
     return this.formRepository.save(form);
   }
@@ -84,7 +76,6 @@ export class FormsService {
   async findAll(
     filters: {
       jobOrder?: string;
-      formType?: string;
       companyId?: number;
       engineId?: string;
     } = {},
@@ -95,21 +86,18 @@ export class FormsService {
       .createQueryBuilder('form')
       .leftJoinAndSelect('form.company', 'company')
       .leftJoinAndSelect('form.engine', 'engine')
-      .leftJoinAndSelect('form.user', 'user')
+      .leftJoinAndSelect('form.customer', 'customer')
       .leftJoinAndSelect('form.companyForm', 'companyForm');
 
     // Apply filters
     if (filters.jobOrder) {
       query.andWhere('form.job_order LIKE :jobOrder', { jobOrder: `%${filters.jobOrder}%` });
     }
-    if (filters.formType) {
-      query.andWhere('form.formType = :formType', { formType: filters.formType });
-    }
     if (filters.companyId) {
-      query.andWhere('form.company = :companyId', { companyId: filters.companyId });
+      query.andWhere('company.id = :companyId', { companyId: filters.companyId });
     }
     if (filters.engineId) {
-      query.andWhere('form.engine = :engineId', { engineId: filters.engineId });
+      query.andWhere('engine.id = :engineId', { engineId: filters.engineId });
     }
 
     const total = await query.getCount();
@@ -129,7 +117,7 @@ export class FormsService {
       .createQueryBuilder('form')
       .leftJoinAndSelect('form.company', 'company')
       .leftJoinAndSelect('form.engine', 'engine')
-      .leftJoinAndSelect('form.user', 'user')
+      .leftJoinAndSelect('form.customer', 'customer')
       .leftJoinAndSelect('form.companyForm', 'companyForm')
       .where('form.id = :id', { id })
       .getOne();

@@ -6,7 +6,7 @@ import { Form } from './forms.entity';
 import { CompanyForm } from '../company-forms/company-forms.entity';
 import { Company } from '../companies/company.entity';
 import { Engine } from '../products/deutz/engine.entity';
-import { User } from '../users/user.entity';
+import { CustomerModule } from '../customer/customer.module'; // ✅ import CustomerModule
 
 @Module({
   imports: [
@@ -15,8 +15,8 @@ import { User } from '../users/user.entity';
       CompanyForm,
       Company,
       Engine,
-      User,
     ]),
+    CustomerModule, 
   ],
   providers: [FormsService],
   controllers: [FormsController],
