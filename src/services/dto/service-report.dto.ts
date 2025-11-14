@@ -1,0 +1,36 @@
+// src/dto/service-report.dto.ts
+export class ServiceReportDto {
+    reportingPerson: string;
+    telephoneFax: string;
+    equipmentManufacturer: string;
+    jobOrder: string;
+    customer: string;
+    contactPerson: string;
+    address: string;
+    emailAddress: string;
+    engineModel: string;
+    engineSerialNo: string;
+    mainAlternator: string;
+    equipmentModel: string;
+    equipmentSerialNo: string;
+    alternatorSerialNo: string;
+    location: string;
+    dateInService: string;
+    rating: string;
+    revolution: string;
+    startingVoltage: string;
+    runningHours: string;
+    fuelPumpSN: string;
+    fuelPumpCode: string;
+    lubeOilType: string;
+    fuelType: string;
+    coolingWaterAdditives: string;
+    dateFailed: string;
+    turboModel: string;
+    turboSN: string;
+    customerComplaint: string;
+    possibleCause: string;
+    withinCoverage: boolean;
+    warrantableFailure: boolean;
+    summaryDetails: string;
+  }

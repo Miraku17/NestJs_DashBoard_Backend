@@ -23,6 +23,8 @@ import { Form } from './modules/forms/forms.entity';
 
 import { ApiKeyGuard } from './guards/api.key.guard';
 
+import { ReportsController } from './services/reports.controller';
+import { PdfService } from './services/pdf.service';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -50,13 +52,14 @@ import { ApiKeyGuard } from './guards/api.key.guard';
     CompanyFormsModule,
     FormsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ReportsController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
       useClass: ApiKeyGuard, 
     },
+    PdfService
   ],
 })
 export class AppModule {}
