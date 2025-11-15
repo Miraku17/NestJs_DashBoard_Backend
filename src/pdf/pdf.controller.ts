@@ -2,7 +2,9 @@ import { Controller, Get, Param, ParseUUIDPipe, Header, StreamableFile } from '@
 import { PdfService } from './pdf.service';
 import { Readable } from 'stream';
 import { FormsService } from 'src/modules/forms/forms.service';
+import { ApiTags, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('PDF')
 @Controller('pdf')
 export class PdfController {
   constructor(
@@ -13,6 +15,22 @@ export class PdfController {
   @Get('service-report/:id')
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'attachment; filename=service-report.pdf')
+  @ApiOperation({ summary: 'Generate a service report PDF for a given form ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID of the service report form',
+    type: 'string',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'PDF file generated successfully',
+    content: {
+      'application/pdf': {
+        schema: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'Form not found' })
   async getServiceReport(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<StreamableFile> {

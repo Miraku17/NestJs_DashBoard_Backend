@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Commissioning Report - Power Systems Inc.</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; background: white; color: #333; line-height: 1.4; }
+      .container { max-width: 1000px; margin: 0 auto; padding: 10px; position: relative; z-index: 1; }
+
+      /* ✅ HARD-CODED WATERMARK IMAGE */
+      .watermark {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('https://lh3.googleusercontent.com/ZOp9qbTy1MsnZoBVT04qsc-0sMOVS1Wj3deJsD7LTesQguvwXc0h2MD9ZHbrqeAGnqZod3TJ13fti4xPBAAHZojdYpvj8pJgplDSpKh3GpHQ9NSk6DwhJHw=s140');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 60%;
+        opacity: 0.18;
+        z-index: 0;
+      }
+
+      .header { text-align: center; border-bottom: 2px solid #1e40af; padding-bottom: 15px; margin-bottom: 20px; }
+      .company-name { font-size: 20px; font-weight: bold; margin-bottom: 8px; color: #1e40af; }
+      .company-details, .contact-info, .branches { color: #555; font-size: 12px; line-height: 1.4; }
+      .contact-info { font-size: 11px; color: #666; }
+      .branches { font-size: 10px; color: #666; letter-spacing: 1px; }
+      .report-title { text-align: center; margin: 25px 0; }
+      .title-main { font-size: 24px; font-weight: bold; margin-bottom: 5px; color: #1e40af; }
+      .title-subtitle { font-size: 12px; color: #666; }
+
+      .form-section { border: 1px solid #ccc; margin-bottom: 15px; background: rgba(250, 250, 250, 0.85); break-inside: avoid; page-break-inside: avoid; padding: 10px; border-radius: 4px; }
+      .section-header { background: #1e40af; color: white; padding: 10px 15px; font-size: 14px; font-weight: bold; border-radius: 3px 3px 0 0; }
+      .section-content { padding: 10px 15px; }
+
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+      .field-group { display: flex; flex-direction: column; gap: 3px; }
+      .field-label { font-size: 11px; font-weight: bold; color: #555; }
+      .field-box, .textarea-box { padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #ccc; background: transparent; display: flex; align-items: center; white-space: pre-wrap; }
+      .textarea-box { min-height: 80px; }
+      .large-textarea-box { min-height: 150px; }
+      .full-width { grid-column: 1 / -1; }
+
+      .signature-section { border: 1px solid #ccc; padding: 20px; margin-top: 20px; background: rgba(249, 249, 249, 0.85); break-inside: avoid; border-radius: 4px; }
+      .signature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; }
+      .signature-box { text-align: center; }
+      .signature-label { font-size: 12px; font-weight: bold; margin-bottom: 30px; color: #1e40af; }
+      .signature-line { border-bottom: 1px solid #333; margin-bottom: 5px; height: 30px; }
+      .signature-name { font-size: 10px; color: #666; }
+
+      @media (max-width: 768px) {
+        .grid { grid-template-columns: 1fr; gap: 8px; }
+      }
+
+      @media print {
+        body { background: white !important; padding: 0; margin: 0; }
+        .form-section { break-inside: avoid; }
+        .watermark { opacity: 0.15 !important; }
+      }
+
+      @page { size: A4; margin: 20mm 15mm; }
+    </style>
+  </head>
+
+  <body>
+    <div class="watermark"></div>
+
+    <div class="container">
+
+      <!-- HEADER -->
+      <div class="header">
+        <div class="company-name">Power Systems, Incorporated</div>
+        <div class="company-details">
+          2nd Floor TOPY's Place #3 Calle Industria cor. Economia Street<br />
+          Bagumbayan, Libis, Quezon City
+        </div>
+        <div class="contact-info">
+          Tel: (+63-2) 687-9275 to 78 | Fax: (+63-2) 687-9279 | Email: sales@psi-deutz.com
+        </div>
+        <div class="branches">
+          NAVOTAS • BACOLOD • CEBU • CAGAYAN • DAVAO • GEN SAN • ZAMBOANGA • ILO-ILO • SURIGAO
+        </div>
+      </div>
+
+      <!-- TITLE -->
+      <div class="report-title">
+        <div class="title-main">COMMISSIONING REPORT</div>
+        <div class="title-subtitle">Official Equipment Commissioning Documentation</div>
+      </div>
+
+      <!-- BASIC INFORMATION -->
+      <div class="form-section">
+        <div class="section-header">Basic Information</div>
+        <div class="section-content">
+          <div class="grid">
+
+            <div class="field-group">
+              <div class="field-label">Job Order</div>
+              <div class="field-box">{{job_order}}</div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Reporting Person</div>
+              <div class="field-box">{{basicInformation.reportingPersonName}}</div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Telephone</div>
+              <div class="field-box">{{basicInformation.telephone}}</div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Customer</div>
+              <div class="field-box">{{basicInformation.customer}}</div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Contact Person</div>
+              <div class="field-box">{{basicInformation.contactPerson}}</div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Email Address</div>
+              <div class="field-box">{{basicInformation.emailAddress}}</div>
+            </div>
+
+            <div class="field-group full-width">
+              <div class="field-label">Address</div>
+              <div class="field-box">{{basicInformation.address}}</div>
+            </div>
+
+            <div class="field-group full-width">
+              <div class="field-label">Equipment Name / Installation</div>
+              <div class="field-box">{{basicInformation.equipmentName}}</div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Running Hours</div>
+              <div class="field-box">{{basicInformation.runningHours}}</div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Commissioning No.</div>
+              <div class="field-box">{{basicInformation.commissioningNo}}</div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Date Commissioned</div>
+              <div class="field-box">{{basicInformation.dateCommissioned}}</div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Location of Commissioning</div>
+              <div class="field-box">{{basicInformation.location}}</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ENGINE INFORMATION -->
+      <div class="form-section">
+        <div class="section-header">Engine Information</div>
+        <div class="section-content">
+          <div class="grid">
+
+            <div class="field-group"><div class="field-label">Deutz Engine Model</div><div class="field-box">{{engineInformation.engineModel}}</div></div>
+            <div class="field-group"><div class="field-label">Serial No.</div><div class="field-box">{{engineInformation.engineSerialNo}}</div></div>
+            <div class="field-group"><div class="field-label">Equipment Manufacturer</div><div class="field-box">{{engineInformation.equipmentManufacturer}}</div></div>
+            <div class="field-group"><div class="field-label">Equipment Model</div><div class="field-box">{{engineInformation.equipmentModel}}</div></div>
+            <div class="field-group"><div class="field-label">Equipment No.</div><div class="field-box">{{engineInformation.equipmentSerialNo}}</div></div>
+            <div class="field-group"><div class="field-label">Output</div><div class="field-box">{{engineInformation.output}}</div></div>
+            <div class="field-group"><div class="field-label">Revolutions</div><div class="field-box">{{engineInformation.revolution}}</div></div>
+            <div class="field-group"><div class="field-label">Main Effective Pressure</div><div class="field-box">{{engineInformation.mainEffectivePressure}}</div></div>
+            <div class="field-group"><div class="field-label">Lube Oil Type</div><div class="field-box">{{engineInformation.lubeOilType}}</div></div>
+            <div class="field-group"><div class="field-label">Fuel Type</div><div class="field-box">{{engineInformation.fuelType}}</div></div>
+            <div class="field-group"><div class="field-label">Cooling Water Additives</div><div class="field-box">{{engineInformation.coolingWaterAdditives}}</div></div>
+            <div class="field-group"><div class="field-label">Fuel Pump S/N</div><div class="field-box">{{engineInformation.fuelPumpSN}}</div></div>
+            <div class="field-group"><div class="field-label">Fuel Pump Code</div><div class="field-box">{{engineInformation.fuelPumpCode}}</div></div>
+            <div class="field-group"><div class="field-label">Turbo Model</div><div class="field-box">{{engineInformation.turboModel}}</div></div>
+            <div class="field-group"><div class="field-label">Turbo S/N</div><div class="field-box">{{engineInformation.turboSN}}</div></div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- INSPECTION -->
+      <div class="form-section">
+        <div class="section-header">Inspection Prior to Test</div>
+        <div class="section-content">
+          <div class="grid">
+
+            <div class="field-group"><div class="field-label">Oil Level</div><div class="field-box">{{inspection.oilLevel}}</div></div>
+            <div class="field-group"><div class="field-label">Air Filter</div><div class="field-box">{{inspection.airFilter}}</div></div>
+            <div class="field-group"><div class="field-label">Hoses & Clamps</div><div class="field-box">{{inspection.hosesAndClamps}}</div></div>
+            <div class="field-group"><div class="field-label">Engine Support</div><div class="field-box">{{inspection.engineSupport}}</div></div>
+            <div class="field-group"><div class="field-label">V-Belt Condition</div><div class="field-box">{{inspection.vBelt}}</div></div>
+            <div class="field-group"><div class="field-label">Water Level</div><div class="field-box">{{inspection.waterLevel}}</div></div>
+            <div class="field-group"><div class="field-label">Crankshaft End Play</div><div class="field-box">{{inspection.crankshaftEndPlay}}</div></div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- TEST RUN -->
+      <div class="form-section">
+        <div class="section-header">Test Run</div>
+        <div class="section-content">
+          <div class="textarea-box">{{testRun}}</div>
+        </div>
+      </div>
+
+      <!-- ENGINE PARAMETERS -->
+      <div class="form-section">
+        <div class="section-header">Engine Parameters</div>
+        <div class="section-content">
+          <div class="grid">
+
+            <div class="field-group"><div class="field-label">RPM Idle Speed</div><div class="field-box">{{engineParameters.rpmIdle}}</div></div>
+            <div class="field-group"><div class="field-label">RPM Full Speed</div><div class="field-box">{{engineParameters.rpmFull}}</div></div>
+            <div class="field-group"><div class="field-label">Oil Pressure Idle</div><div class="field-box">{{engineParameters.oilPressureIdle}}</div></div>
+            <div class="field-group"><div class="field-label">Oil Pressure Full</div><div class="field-box">{{engineParameters.oilPressureFull}}</div></div>
+            <div class="field-group"><div class="field-label">Oil Temperature</div><div class="field-box">{{engineParameters.oilTemperature}}</div></div>
+            <div class="field-group"><div class="field-label">Engine Smoke</div><div class="field-box">{{engineParameters.smoke}}</div></div>
+            <div class="field-group"><div class="field-label">Vibration</div><div class="field-box">{{engineParameters.vibration}}</div></div>
+            <div class="field-group"><div class="field-label">Leakage</div><div class="field-box">{{engineParameters.leakage}}</div></div>
+            <div class="field-group"><div class="field-label">Cylinder Head Temperature</div><div class="field-box">{{engineParameters.cylinderHeadTemperature}}</div></div>
+            <div class="field-group"><div class="field-label">Cylinder No.</div><div class="field-box">{{engineParameters.cylinderNumber}}</div></div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- PARTS -->
+      <div class="form-section">
+        <div class="section-header">Parts and Readings</div>
+        <div class="section-content">
+          <div class="grid">
+
+            <div class="field-group"><div class="field-label">A1</div><div class="field-box">{{parts.A1}}</div></div>
+            <div class="field-group"><div class="field-label">B1</div><div class="field-box">{{parts.B1}}</div></div>
+
+            <div class="field-group"><div class="field-label">A2</div><div class="field-box">{{parts.A2}}</div></div>
+            <div class="field-group"><div class="field-label">B2</div><div class="field-box">{{parts.B2}}</div></div>
+
+            <div class="field-group"><div class="field-label">A3</div><div class="field-box">{{parts.A3}}</div></div>
+            <div class="field-group"><div class="field-label">B3</div><div class="field-box">{{parts.B3}}</div></div>
+
+            <div class="field-group"><div class="field-label">A4</div><div class="field-box">{{parts.A4}}</div></div>
+            <div class="field-group"><div class="field-label">B4</div><div class="field-box">{{parts.B4}}</div></div>
+
+            <div class="field-group"><div class="field-label">A5</div><div class="field-box">{{parts.A5}}</div></div>
+            <div class="field-group"><div class="field-label">B5</div><div class="field-box">{{parts.B5}}</div></div>
+
+            <div class="field-group"><div class="field-label">A6</div><div class="field-box">{{parts.A6}}</div></div>
+            <div class="field-group"><div class="field-label">B6</div><div class="field-box">{{parts.B6}}</div></div>
+
+            <div class="field-group full-width"><div class="field-label">Starter Part No.</div><div class="field-box">{{parts.starterPartNo}}</div></div>
+            <div class="field-group full-width"><div class="field-label">Alternator Part No.</div><div class="field-box">{{parts.alternatorPartNo}}</div></div>
+            <div class="field-group full-width"><div class="field-label">V-Belt Part No.</div><div class="field-box">{{parts.vBeltPartNo}}</div></div>
+            <div class="field-group full-width"><div class="field-label">Air Filter Part No.</div><div class="field-box">{{parts.airFilterPartNo}}</div></div>
+            <div class="field-group full-width"><div class="field-label">Oil Filter Part No.</div><div class="field-box">{{parts.oilFilterPartNo}}</div></div>
+            <div class="field-group full-width"><div class="field-label">Fuel Filter Part No.</div><div class="field-box">{{parts.fuelFilterPartNo}}</div></div>
+            <div class="field-group full-width"><div class="field-label">Pre-Fuel Filter Part No.</div><div class="field-box">{{parts.preFuelFilterPartNo}}</div></div>
+
+            <div class="field-group"><div class="field-label">Controller Brand</div><div class="field-box">{{parts.controllerBrand}}</div></div>
+            <div class="field-group"><div class="field-label">Controller Model</div><div class="field-box">{{parts.controllerModel}}</div></div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- REMARKS -->
+      <div class="form-section">
+        <div class="section-header">Remarks</div>
+        <div class="section-content">
+          <div class="textarea-box large-textarea-box">{{remarks}}</div>
+        </div>
+      </div>
+
+      <!-- RECOMMENDATION -->
+      <div class="form-section">
+        <div class="section-header">Recommendation</div>
+        <div class="section-content">
+          <div class="textarea-box large-textarea-box">{{recommendation}}</div>
+        </div>
+      </div>
+
+      <!-- SIGNATURES -->
+      <div class="signature-section">
+        <div class="signature-grid">
+
+          <div class="signature-box">
+            <div class="signature-label">Service Technician</div>
+            <div class="signature-line"></div>
+            <div class="signature-name">{{signatures.serviceTechnician.name}}<br>{{signatures.serviceTechnician.date}}</div>
+          </div>
+
+          <div class="signature-box">
+            <div class="signature-label">Approved By</div>
+            <div class="signature-line"></div>
+            <div class="signature-name">{{signatures.approvedBy.name}}<br>{{signatures.approvedBy.date}}</div>
+          </div>
+
+          <div class="signature-box">
+            <div class="signature-label">Acknowledged By</div>
+            <div class="signature-line"></div>
+            <div class="signature-name">{{signatures.acknowledgedBy.name}}<br>{{signatures.acknowledgedBy.date}}</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </body>
+</html>
