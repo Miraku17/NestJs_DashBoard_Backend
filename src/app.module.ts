@@ -15,6 +15,8 @@ import { EngineModule } from './modules/products/deutz/engine.module';
 import { CompanyModule } from './modules/companies/company.module';
 import { CompanyFormsModule } from './modules/company-forms/company-forms.module';
 import { FormsModule } from './modules/forms/forms.module';
+import { PdfModule } from './pdf/pdf.module';
+import { ChatbotModule } from './modules/chatbot/chatbot.module'; // NEW
 
 import { User } from './modules/users/user.entity';
 import { Customer } from './modules/customer/customer.entity';
@@ -24,20 +26,16 @@ import { CompanyForm } from './modules/company-forms/company-forms.entity';
 import { Form } from './modules/forms/forms.entity';
 
 import { ApiKeyGuard } from './guards/api.key.guard';
-import { PdfModule } from './pdf/pdf.module';
+
 @Module({
   imports: [
-
-
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'src', 'common', 'images'),
       serveRoot: '/images',
     }),
 
-    
     ConfigModule.forRoot({ isGlobal: true }),
 
-    
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
@@ -60,7 +58,8 @@ import { PdfModule } from './pdf/pdf.module';
     CompanyModule,
     CompanyFormsModule,
     FormsModule,
-    PdfModule
+    PdfModule,
+    ChatbotModule, // NEW
   ],
   controllers: [AppController],
   providers: [
