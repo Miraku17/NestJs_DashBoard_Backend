@@ -46,7 +46,7 @@ export class PdfController {
       engineInformation: form.data.engineInformation || {},
       serviceDetails: form.data.serviceDetails || {},
       warrantyCoverage: form.data.warrantyCoverage || {},
-      serviceSummary: form.data.serviceSummary || {},
+      serviceSummary: form.data.servicesSummary || {},
       signatures: form.data.signatures || {},
       companyForm: form.companyForm || {},
     };

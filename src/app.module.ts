@@ -27,6 +27,7 @@ import { Form } from './modules/forms/forms.entity';
 
 import { ApiKeyGuard } from './guards/api.key.guard';
 
+import { DatabaseModule } from './modules/database/database.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -59,7 +60,8 @@ import { ApiKeyGuard } from './guards/api.key.guard';
     CompanyFormsModule,
     FormsModule,
     PdfModule,
-    ChatbotModule, // NEW
+    ChatbotModule,
+    DatabaseModule
   ],
   controllers: [AppController],
   providers: [

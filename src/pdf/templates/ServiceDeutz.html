@@ -76,7 +76,7 @@
             </div>
             <div class="field-group">
               <div class="field-label">Name (Reporting Person)</div>
-              <div class="field-box">{{basicInformation.reportingPersonName}}</div>
+              <div class="field-box">{{basicInformation.customerName}}</div>
             </div>
             <div class="field-group">
               <div class="field-label">Telephone</div>
@@ -84,7 +84,7 @@
             </div>
             <div class="field-group">
               <div class="field-label">Equipment Manufacturer</div>
-              <div class="field-box">{{basicInformation.equipmentManufacturer}}</div>
+              <div class="field-box">{{basicInformation.customerEquipment}}</div>
             </div>
             <div class="field-group">
               <div class="field-label">Customer</div>
@@ -92,15 +92,15 @@
             </div>
             <div class="field-group">
               <div class="field-label">Contact Person</div>
-              <div class="field-box">{{basicInformation.contactPerson}}</div>
+              <div class="field-box">{{basicInformation.customerContactPerson}}</div>
             </div>
             <div class="field-group">
               <div class="field-label">Email Address</div>
-              <div class="field-box">{{basicInformation.emailAddress}}</div>
+              <div class="field-box">{{basicInformation.customerEmail}}</div>
             </div>
             <div class="field-group full-width">
               <div class="field-label">Address</div>
-              <div class="field-box">{{basicInformation.address}}</div>
+              <div class="field-box">{{basicInformation.customerAddress}}</div>
             </div>
           </div>
         </div>
@@ -113,24 +113,24 @@
           <div class="grid">
             <div class="field-group"><div class="field-label">Engine Model</div><div class="field-box">{{engineInformation.engineModel}}</div></div>
             <div class="field-group"><div class="field-label">Engine Serial No.</div><div class="field-box">{{engineInformation.engineSerialNo}}</div></div>
-            <div class="field-group"><div class="field-label">Main Alternator / Transmission Brand/Model</div><div class="field-box">{{engineInformation.mainAlternatorTransmissionBrandModel}}</div></div>
-            <div class="field-group"><div class="field-label">Equipment Model</div><div class="field-box">{{engineInformation.equipmentModel}}</div></div>
-            <div class="field-group"><div class="field-label">Equipment Serial No.</div><div class="field-box">{{engineInformation.equipmentSerialNo}}</div></div>
-            <div class="field-group"><div class="field-label">Main Alternator / Transmission S/N</div><div class="field-box">{{engineInformation.mainAlternatorTransmissionSerialNo}}</div></div>
-            <div class="field-group"><div class="field-label">Location</div><div class="field-box">{{engineInformation.location}}</div></div>
+            <div class="field-group"><div class="field-label">Main Alternator / Transmission Brand/Model</div><div class="field-box">{{engineInformation.engineAltBrandModel}}</div></div>
+            <div class="field-group"><div class="field-label">Equipment Model</div><div class="field-box">{{engineInformation.engineEquipModel}}</div></div>
+            <div class="field-group"><div class="field-label">Equipment Serial No.</div><div class="field-box">{{engineInformation.engineEquipSerialNo}}</div></div>
+            <div class="field-group"><div class="field-label">Main Alternator / Transmission S/N</div><div class="field-box">{{engineInformation.engineAltSerialNo}}</div></div>
+            <div class="field-group"><div class="field-label">Location</div><div class="field-box">{{engineInformation.engineLocation}}</div></div>
             <div class="field-group"><div class="field-label">Date In Service</div><div class="field-box">{{engineInformation.dateInService}}</div></div>
-            <div class="field-group"><div class="field-label">Rating</div><div class="field-box">{{engineInformation.rating}}</div></div>
-            <div class="field-group"><div class="field-label">Revolution (RPM)</div><div class="field-box">{{engineInformation.revolution}}</div></div>
-            <div class="field-group"><div class="field-label">Starting Voltage</div><div class="field-box">{{engineInformation.startingVoltage}}</div></div>
-            <div class="field-group"><div class="field-label">Running Hours</div><div class="field-box">{{engineInformation.runningHours}}</div></div>
-            <div class="field-group"><div class="field-label">Fuel Pump S/N</div><div class="field-box">{{engineInformation.fuelPumpSN}}</div></div>
-            <div class="field-group"><div class="field-label">Fuel Pump Code</div><div class="field-box">{{engineInformation.fuelPumpCode}}</div></div>
-            <div class="field-group"><div class="field-label">Lube Oil Type</div><div class="field-box">{{engineInformation.lubeOilType}}</div></div>
-            <div class="field-group"><div class="field-label">Fuel Type</div><div class="field-box">{{engineInformation.fuelType}}</div></div>
-            <div class="field-group"><div class="field-label">Cooling Water Additives</div><div class="field-box">{{engineInformation.coolingWaterAdditives}}</div></div>
+            <div class="field-group"><div class="field-label">Rating</div><div class="field-box">{{engineInformation.engineRating}}</div></div>
+            <div class="field-group"><div class="field-label">Revolution (RPM)</div><div class="field-box">{{engineInformation.engineRpm}}</div></div>
+            <div class="field-group"><div class="field-label">Starting Voltage</div><div class="field-box">{{engineInformation.engineStartVoltage}}</div></div>
+            <div class="field-group"><div class="field-label">Running Hours</div><div class="field-box">{{engineInformation.engineRunHours}}</div></div>
+            <div class="field-group"><div class="field-label">Fuel Pump S/N</div><div class="field-box">{{engineInformation.engineFuelPumpSN}}</div></div>
+            <div class="field-group"><div class="field-label">Fuel Pump Code</div><div class="field-box">{{engineInformation.engineFuelPumpCode}}</div></div>
+            <div class="field-group"><div class="field-label">Lube Oil Type</div><div class="field-box">{{engineInformation.engineLubeOil}}</div></div>
+            <div class="field-group"><div class="field-label">Fuel Type</div><div class="field-box">{{engineInformation.engineFuelType}}</div></div>
+            <div class="field-group"><div class="field-label">Cooling Water Additives</div><div class="field-box">{{engineInformation.engineCoolantAdditive}}</div></div>
             <div class="field-group"><div class="field-label">Date Failed</div><div class="field-box">{{engineInformation.dateFailed}}</div></div>
-            <div class="field-group"><div class="field-label">Turbo Model</div><div class="field-box">{{engineInformation.turboModel}}</div></div>
-            <div class="field-group"><div class="field-label">Turbo S/N</div><div class="field-box">{{engineInformation.turboSN}}</div></div>
+            <div class="field-group"><div class="field-label">Turbo Model</div><div class="field-box">{{engineInformation.engineTurboModel}}</div></div>
+            <div class="field-group"><div class="field-label">Turbo S/N</div><div class="field-box">{{engineInformation.engineTurboSN}}</div></div>
           </div>
         </div>
       </div>
@@ -163,17 +163,17 @@
           <div class="signature-box">
             <div class="signature-label">Service Technician</div>
             <div class="signature-line"></div>
-            <div class="signature-name">{{signatures.serviceTechnician.name}}<br />{{signatures.serviceTechnician.date}}</div>
+            <div class="signature-name">{{signatures.serviceTechnician}}<br />{{signatures.serviceTechnician.date}}</div>
           </div>
           <div class="signature-box">
             <div class="signature-label">Approved By</div>
             <div class="signature-line"></div>
-            <div class="signature-name">{{signatures.approvedBy.name}}<br />{{signatures.approvedBy.date}}</div>
+            <div class="signature-name">{{signatures.approvedBy}}<br />{{signatures.approvedBy.date}}</div>
           </div>
           <div class="signature-box">
             <div class="signature-label">Acknowledged By</div>
             <div class="signature-line"></div>
-            <div class="signature-name">{{signatures.acknowledgedBy.name}}<br />{{signatures.acknowledgedBy.date}}</div>
+            <div class="signature-name">{{signatures.acknowledgedBy}}<br />{{signatures.acknowledgedBy.date}}</div>
           </div>
         </div>
       </div>
