@@ -6,8 +6,7 @@ import { Form } from './forms.entity';
 import { CompanyForm } from '../company-forms/company-forms.entity';
 import { Company } from '../companies/company.entity';
 import { Engine } from '../products/deutz/engine.entity';
-import { CustomerModule } from '../customer/customer.module'; // ✅ import CustomerModule
-
+import { CustomerModule } from '../customer/customer.module'; 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -16,9 +15,10 @@ import { CustomerModule } from '../customer/customer.module'; // ✅ import Cust
       Company,
       Engine,
     ]),
-    CustomerModule, 
+    CustomerModule,
   ],
   providers: [FormsService],
   controllers: [FormsController],
+  exports: [FormsService], 
 })
 export class FormsModule {}

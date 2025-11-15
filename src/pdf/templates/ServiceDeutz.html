@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Service Report - Power Systems Inc.</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; background: white; color: #333; line-height: 1.4; }
+      .container { max-width: 1000px; margin: 0 auto; padding: 10px; position: relative; z-index: 1; }
+      .watermark { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('https://lh3.googleusercontent.com/ZOp9qbTy1MsnZoBVT04qsc-0sMOVS1Wj3deJsD7LTesQguvwXc0h2MD9ZHbrqeAGnqZod3TJ13fti4xPBAAHZojdYpvj8pJgplDSpKh3GpHQ9NSk6DwhJHw=s140'); background-repeat: no-repeat; background-position: center; background-size: 60%; opacity: 0.18; z-index: 0; }
+      .header { text-align: center; border-bottom: 2px solid #1e40af; padding-bottom: 15px; margin-bottom: 20px; }
+      .company-name { font-size: 20px; font-weight: bold; margin-bottom: 8px; color: #1e40af; }
+      .company-details, .contact-info, .branches { color: #555; font-size: 12px; line-height: 1.4; }
+      .contact-info { font-size: 11px; color: #666; }
+      .branches { font-size: 10px; color: #666; letter-spacing: 1px; }
+      .report-title { text-align: center; margin: 25px 0; }
+      .title-main { font-size: 24px; font-weight: bold; margin-bottom: 5px; color: #1e40af; }
+      .title-subtitle { font-size: 12px; color: #666; }
+      .form-section { border: 1px solid #ccc; margin-bottom: 15px; background: rgba(250, 250, 250, 0.85); break-inside: avoid; page-break-inside: avoid; padding: 10px; border-radius: 4px; }
+      .section-header { background: #1e40af; color: white; padding: 10px 15px; font-size: 14px; font-weight: bold; border-radius: 3px 3px 0 0; }
+      .section-content { padding: 10px 15px; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+      .field-group { display: flex; flex-direction: column; gap: 3px; }
+      .field-label { font-size: 11px; font-weight: bold; color: #555; }
+      .field-box, .textarea-box { padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #ccc; background: transparent; display: flex; align-items: center; white-space: pre-wrap; }
+      .textarea-box { min-height: 80px; }
+      .large-textarea-box { min-height: 150px; }
+      .full-width { grid-column: 1 / -1; }
+      .signature-section { border: 1px solid #ccc; padding: 20px; margin-top: 20px; background: rgba(249, 249, 249, 0.85); break-inside: avoid; page-break-inside: avoid; border-radius: 4px; }
+      .signature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; }
+      .signature-box { text-align: center; }
+      .signature-label { font-size: 12px; font-weight: bold; margin-bottom: 30px; color: #1e40af; }
+      .signature-line { border-bottom: 1px solid #333; margin-bottom: 5px; }
+      .signature-name { font-size: 10px; color: #666; }
+      @media (max-width: 768px) { .grid { grid-template-columns: 1fr; gap: 8px; } .signature-grid { grid-template-columns: 1fr; gap: 20px; } }
+      @media print { body { background: white !important; padding: 0; margin: 0; } .container { padding: 5px; max-width: 100%; } .form-section, .signature-section { break-inside: avoid; page-break-inside: avoid; } .field-group { break-inside: avoid; page-break-inside: avoid; } .watermark { opacity: 0.18; } }
+      @page { size: A4; margin: 20mm 15mm; }
+    </style>
+  </head>
+  <body>
+    <div class="watermark"></div>
+    <div class="container">
+
+      <!-- Header -->
+      <div class="header">
+        <div class="company-name">Power Systems, Incorporated</div>
+        <div class="company-details">
+          2nd Floor TOPY's Place #3 Calle Industria cor. Economia Street<br />
+          Bagumbayan, Libis, Quezon City
+        </div>
+        <div class="contact-info">
+          Tel: (+63-2) 687-9275 to 78 | Fax: (+63-2) 687-9279 | Email: sales@psi-deutz.com
+        </div>
+        <div class="branches">NAVOTAS • BACOLOD • CEBU • CAGAYAN • DAVAO • GEN SAN • ZAMBOANGA • ILO-ILO • SURIGAO</div>
+      </div>
+
+      <!-- Report Title -->
+      <div class="report-title">
+        <div class="title-main">SERVICE REPORT</div>
+        <div class="title-subtitle">Comprehensive Equipment Service Documentation</div>
+      </div>
+
+      <!-- Basic Information -->
+      <div class="form-section">
+        <div class="section-header">Basic Information</div>
+        <div class="section-content">
+          <div class="grid">
+            <div class="field-group">
+              <div class="field-label">Job Order</div>
+              <div class="field-box">{{job_order}}</div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Date</div>
+              <div class="field-box">{{basicInformation.date}}</div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Name (Reporting Person)</div>
+              <div class="field-box">{{basicInformation.reportingPersonName}}</div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Telephone</div>
+              <div class="field-box">{{basicInformation.telephone}}</div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Equipment Manufacturer</div>
+              <div class="field-box">{{basicInformation.equipmentManufacturer}}</div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Customer</div>
+              <div class="field-box">{{basicInformation.customer}}</div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Contact Person</div>
+              <div class="field-box">{{basicInformation.contactPerson}}</div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Email Address</div>
+              <div class="field-box">{{basicInformation.emailAddress}}</div>
+            </div>
+            <div class="field-group full-width">
+              <div class="field-label">Address</div>
+              <div class="field-box">{{basicInformation.address}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engine Information -->
+      <div class="form-section">
+        <div class="section-header">Engine Information</div>
+        <div class="section-content">
+          <div class="grid">
+            <div class="field-group"><div class="field-label">Engine Model</div><div class="field-box">{{engineInformation.engineModel}}</div></div>
+            <div class="field-group"><div class="field-label">Engine Serial No.</div><div class="field-box">{{engineInformation.engineSerialNo}}</div></div>
+            <div class="field-group"><div class="field-label">Main Alternator / Transmission Brand/Model</div><div class="field-box">{{engineInformation.mainAlternatorTransmissionBrandModel}}</div></div>
+            <div class="field-group"><div class="field-label">Equipment Model</div><div class="field-box">{{engineInformation.equipmentModel}}</div></div>
+            <div class="field-group"><div class="field-label">Equipment Serial No.</div><div class="field-box">{{engineInformation.equipmentSerialNo}}</div></div>
+            <div class="field-group"><div class="field-label">Main Alternator / Transmission S/N</div><div class="field-box">{{engineInformation.mainAlternatorTransmissionSerialNo}}</div></div>
+            <div class="field-group"><div class="field-label">Location</div><div class="field-box">{{engineInformation.location}}</div></div>
+            <div class="field-group"><div class="field-label">Date In Service</div><div class="field-box">{{engineInformation.dateInService}}</div></div>
+            <div class="field-group"><div class="field-label">Rating</div><div class="field-box">{{engineInformation.rating}}</div></div>
+            <div class="field-group"><div class="field-label">Revolution (RPM)</div><div class="field-box">{{engineInformation.revolution}}</div></div>
+            <div class="field-group"><div class="field-label">Starting Voltage</div><div class="field-box">{{engineInformation.startingVoltage}}</div></div>
+            <div class="field-group"><div class="field-label">Running Hours</div><div class="field-box">{{engineInformation.runningHours}}</div></div>
+            <div class="field-group"><div class="field-label">Fuel Pump S/N</div><div class="field-box">{{engineInformation.fuelPumpSN}}</div></div>
+            <div class="field-group"><div class="field-label">Fuel Pump Code</div><div class="field-box">{{engineInformation.fuelPumpCode}}</div></div>
+            <div class="field-group"><div class="field-label">Lube Oil Type</div><div class="field-box">{{engineInformation.lubeOilType}}</div></div>
+            <div class="field-group"><div class="field-label">Fuel Type</div><div class="field-box">{{engineInformation.fuelType}}</div></div>
+            <div class="field-group"><div class="field-label">Cooling Water Additives</div><div class="field-box">{{engineInformation.coolingWaterAdditives}}</div></div>
+            <div class="field-group"><div class="field-label">Date Failed</div><div class="field-box">{{engineInformation.dateFailed}}</div></div>
+            <div class="field-group"><div class="field-label">Turbo Model</div><div class="field-box">{{engineInformation.turboModel}}</div></div>
+            <div class="field-group"><div class="field-label">Turbo S/N</div><div class="field-box">{{engineInformation.turboSN}}</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service Details -->
+      <div class="form-section">
+        <div class="section-header">Service Details</div>
+        <div class="section-content">
+          <div class="grid">
+            <div class="field-group full-width"><div class="field-label">Customer Complaint</div><div class="textarea-box">{{serviceDetails.customerComplaint}}</div></div>
+            <div class="field-group full-width"><div class="field-label">Possible Cause</div><div class="textarea-box">{{serviceDetails.possibleCause}}</div></div>
+            <div class="field-group full-width"><div class="field-label">Warranty Details</div><div class="textarea-box">{{serviceDetails.warrantyDetails}}</div></div>
+            <div class="field-group"><div class="field-label">Within Coverage Period</div><div class="field-box">{{warrantyCoverage.withinCoveragePeriod}}</div></div>
+            <div class="field-group"><div class="field-label">Warrantable Failure</div><div class="field-box">{{warrantyCoverage.warrantableFailure}}</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service Summary -->
+      <div class="form-section">
+        <div class="section-header">Service Summary</div>
+        <div class="section-content">
+          <div class="field-group"><div class="field-label">Summary Details</div><div class="textarea-box large-textarea-box">{{serviceSummary.summaryDetails}}</div></div>
+        </div>
+      </div>
+
+      <!-- Signatures -->
+      <div class="signature-section">
+        <div class="signature-grid">
+          <div class="signature-box">
+            <div class="signature-label">Service Technician</div>
+            <div class="signature-line"></div>
+            <div class="signature-name">{{signatures.serviceTechnician.name}}<br />{{signatures.serviceTechnician.date}}</div>
+          </div>
+          <div class="signature-box">
+            <div class="signature-label">Approved By</div>
+            <div class="signature-line"></div>
+            <div class="signature-name">{{signatures.approvedBy.name}}<br />{{signatures.approvedBy.date}}</div>
+          </div>
+          <div class="signature-box">
+            <div class="signature-label">Acknowledged By</div>
+            <div class="signature-line"></div>
+            <div class="signature-name">{{signatures.acknowledgedBy.name}}<br />{{signatures.acknowledgedBy.date}}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </body>
+</html>
