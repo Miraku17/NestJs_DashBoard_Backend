@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateEngineDto {
@@ -73,4 +73,9 @@ export class CreateEngineDto {
   @ApiProperty({ example: 'TURBO123', description: 'Turbo serial number' })
   @IsString()
   turboSN: string;
+
+  // 🔹 Company ID (number)
+  @ApiProperty({ example: 1, description: 'ID of the company this engine belongs to' })
+  @IsNumber()
+  companyId: number;
 }

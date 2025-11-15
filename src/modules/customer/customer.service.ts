@@ -1,5 +1,4 @@
-// customer.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Customer } from './customer.entity';
@@ -12,25 +11,51 @@ export class CustomerService {
     private customerRepo: Repository<Customer>,
   ) {}
 
-  create(dto: CreateCustomerDto) {
+  // Create a new customer
+  async create(dto: CreateCustomerDto) {
     const customer = this.customerRepo.create(dto);
-    return this.customerRepo.save(customer);
+    const savedCustomer = await this.customerRepo.save(customer);
+    return {
+      success: true,
+      message: 'Customer created successfully',
+      data: savedCustomer,
+    };
   }
 
-  findAll() {
-    return this.customerRepo.find();
+  // Get all customers
+  async findAll() {
+    const customers = await this.customerRepo.find();
+    return {
+      success: true,
+      message: 'Customers retrieved successfully',
+      data: customers,
+    };
   }
 
-  findOne(id: string) {
-    return this.customerRepo.findOneBy({ id });
-  }
-
-  async remove(id: string) {
-    const result = await this.customerRepo.delete(id);
-    if (result.affected === 0) {
-      throw new Error(`Customer with id ${id} not found`);
+  // Get a single customer by ID
+  async findOne(id: string) {
+    const customer = await this.customerRepo.findOneBy({ id });
+    if (!customer) {
+      throw new NotFoundException(`Customer with id ${id} not found`);
     }
-    return { message: 'Customer deleted successfully' };
+    return {
+      success: true,
+      message: 'Customer retrieved successfully',
+      data: customer,
+    };
   }
-  
+
+  // Delete a customer by ID
+  async remove(id: string) {
+    const customer = await this.customerRepo.findOneBy({ id });
+    if (!customer) {
+      throw new NotFoundException(`Customer with id ${id} not found`);
+    }
+    await this.customerRepo.remove(customer);
+    return {
+      success: true,
+      message: 'Customer deleted successfully',
+      data: null,
+    };
+  }
 }

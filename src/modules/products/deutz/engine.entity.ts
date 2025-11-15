@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Form } from 'src/modules/forms/forms.entity';
+import { Company } from 'src/modules/companies/company.entity';
 @Entity()
 export class Engine {
   @PrimaryGeneratedColumn('uuid')
@@ -59,10 +60,13 @@ export class Engine {
   @Column()
   turboSN: string;
 
-
   // ✅ Relationship: one engine can have many forms
   @OneToMany(() => Form, (form) => form.engine)
   forms: Form[];
+
+  // ✅ Relationship: engine belongs to one company
+  @ManyToOne(() => Company, { eager: true, onDelete: 'CASCADE' })
+  company: Company;
 
   // ✅ Auto timestamps
   @CreateDateColumn({ type: 'timestamp', name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })

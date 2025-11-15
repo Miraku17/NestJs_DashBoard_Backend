@@ -28,7 +28,7 @@ export class FormsService {
   ) {}
 
   // ✅ Create a new form with auto-generated job order
-  async create(dto: CreateFormDto): Promise<Form> {
+  async create(dto: CreateFormDto) {
     const [companyForm, engine, customer] = await Promise.all([
       this.companyFormRepository.findOne({ where: { id: dto.companyFormId } }),
       this.engineRepository.findOne({ where: { id: dto.engineId } }),
@@ -40,17 +40,22 @@ export class FormsService {
     if (!customer) throw new NotFoundException('Customer not found');
 
     const form = this.formRepository.create({
-      company: companyForm.company, // company derived from the template
+      company: companyForm.company,
       companyForm,
       engine,
       customer,
       data: dto.data,
     });
 
-    // Generate job order using company prefix
     form.job_order = await this.generateJobOrder(form.company.name);
 
-    return this.formRepository.save(form);
+    const savedForm = await this.formRepository.save(form);
+
+    return {
+      success: true,
+      message: 'Form created successfully',
+      data: savedForm,
+    };
   }
 
   // ✅ Auto-generate job order: PREFIX-YEAR-XXXX
@@ -74,14 +79,10 @@ export class FormsService {
 
   // ✅ Find all forms with filtering, pagination, and sorting
   async findAll(
-    filters: {
-      jobOrder?: string;
-      companyId?: number;
-      engineId?: string;
-    } = {},
+    filters: { jobOrder?: string; companyId?: number; engineId?: string } = {},
     page: number = 1,
     limit: number = 10,
-  ): Promise<{ data: Form[]; total: number; page: number; limit: number }> {
+  ) {
     const query = this.formRepository
       .createQueryBuilder('form')
       .leftJoinAndSelect('form.company', 'company')
@@ -89,30 +90,29 @@ export class FormsService {
       .leftJoinAndSelect('form.customer', 'customer')
       .leftJoinAndSelect('form.companyForm', 'companyForm');
 
-    // Apply filters
-    if (filters.jobOrder) {
-      query.andWhere('form.job_order LIKE :jobOrder', { jobOrder: `%${filters.jobOrder}%` });
-    }
-    if (filters.companyId) {
-      query.andWhere('company.id = :companyId', { companyId: filters.companyId });
-    }
-    if (filters.engineId) {
-      query.andWhere('engine.id = :engineId', { engineId: filters.engineId });
-    }
+    if (filters.jobOrder) query.andWhere('form.job_order LIKE :jobOrder', { jobOrder: `%${filters.jobOrder}%` });
+    if (filters.companyId) query.andWhere('company.id = :companyId', { companyId: filters.companyId });
+    if (filters.engineId) query.andWhere('engine.id = :engineId', { engineId: filters.engineId });
 
     const total = await query.getCount();
-
     const data = await query
       .orderBy('form.dateCreated', 'DESC')
       .skip((page - 1) * limit)
       .take(limit)
       .getMany();
 
-    return { data, total, page, limit };
+    return {
+      success: true,
+      message: 'Forms retrieved successfully',
+      data,
+      total,
+      page,
+      limit,
+    };
   }
 
   // ✅ Find one form by ID
-  async findOne(id: string): Promise<Form> {
+  async findOne(id: string) {
     const form = await this.formRepository
       .createQueryBuilder('form')
       .leftJoinAndSelect('form.company', 'company')
@@ -123,6 +123,11 @@ export class FormsService {
       .getOne();
 
     if (!form) throw new NotFoundException(`Form ${id} not found`);
-    return form;
+
+    return {
+      success: true,
+      message: 'Form retrieved successfully',
+      data: form,
+    };
   }
 }

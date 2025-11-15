@@ -16,7 +16,8 @@ export class CompanyFormsService {
     private readonly companyRepository: Repository<Company>,
   ) {}
 
-  async create(dto: CreateCompanyFormDto): Promise<CompanyForm> {
+  // Create a new company form
+  async create(dto: CreateCompanyFormDto) {
     const company = await this.companyRepository.findOne({
       where: { id: dto.companyId },
     });
@@ -32,32 +33,61 @@ export class CompanyFormsService {
       fields: dto.fields,
     });
 
-    return this.companyFormRepository.save(companyForm);
+    const savedForm = await this.companyFormRepository.save(companyForm);
+    return {
+      success: true,
+      message: 'Company form created successfully',
+      data: savedForm,
+    };
   }
 
-  async findAll(): Promise<CompanyForm[]> {
-    return this.companyFormRepository.find({ relations: ['company'] });
+  // Get all company forms
+  async findAll() {
+    const forms = await this.companyFormRepository.find({ relations: ['company'] });
+    return {
+      success: true,
+      message: 'Company forms retrieved successfully',
+      data: forms,
+    };
   }
 
-  async findOne(id: number): Promise<CompanyForm> {
+  // Get a single company form
+  async findOne(id: number) {
     const companyForm = await this.companyFormRepository.findOne({
       where: { id },
       relations: ['company'],
     });
     if (!companyForm) throw new NotFoundException(`CompanyForm ${id} not found`);
-    return companyForm;
+
+    return {
+      success: true,
+      message: 'Company form retrieved successfully',
+      data: companyForm,
+    };
   }
 
-  async update(id: number, dto: UpdateCompanyFormDto): Promise<CompanyForm> {
-    const companyForm = await this.findOne(id);
+  // Update a company form
+  async update(id: number, dto: UpdateCompanyFormDto) {
+    const companyForm = await this.findOne(id); // returns { success, message, data }
+    Object.assign(companyForm.data, dto);
+    const updatedForm = await this.companyFormRepository.save(companyForm.data);
 
-    Object.assign(companyForm, dto);
-
-    return this.companyFormRepository.save(companyForm);
+    return {
+      success: true,
+      message: 'Company form updated successfully',
+      data: updatedForm,
+    };
   }
 
-  async remove(id: number): Promise<void> {
-    const companyForm = await this.findOne(id);
-    await this.companyFormRepository.remove(companyForm);
+  // Delete a company form
+  async remove(id: number) {
+    const companyForm = await this.findOne(id); // returns { success, message, data }
+    await this.companyFormRepository.remove(companyForm.data);
+
+    return {
+      success: true,
+      message: 'Company form deleted successfully',
+      data: null,
+    };
   }
 }

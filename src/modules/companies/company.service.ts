@@ -14,35 +14,59 @@ export class CompanyService {
   ) {}
 
   // Create a new company
-  async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
+  async create(createCompanyDto: CreateCompanyDto) {
     const company = this.companyRepository.create(createCompanyDto);
-    return this.companyRepository.save(company);
+    const savedCompany = await this.companyRepository.save(company);
+    return {
+      success: true,
+      message: 'Company created successfully',
+      data: savedCompany,
+    };
   }
 
   // Get all companies
-  async findAll(): Promise<Company[]> {
-    return this.companyRepository.find();
+  async findAll() {
+    const companies = await this.companyRepository.find();
+    return {
+      success: true,
+      message: 'Companies retrieved successfully',
+      data: companies,
+    };
   }
 
   // Get a single company by ID
-  async findOne(id: number): Promise<Company> {
+  async findOne(id: number) {
     const company = await this.companyRepository.findOne({ where: { id } });
     if (!company) {
       throw new NotFoundException(`Company with ID ${id} not found`);
     }
-    return company;
+    return {
+      success: true,
+      message: 'Company retrieved successfully',
+      data: company,
+    };
   }
 
   // Update a company by ID
-  async update(id: number, updateCompanyDto: UpdateCompanyDto): Promise<Company> {
+  async update(id: number, updateCompanyDto: UpdateCompanyDto) {
     const company = await this.findOne(id); // will throw if not found
-    Object.assign(company, updateCompanyDto);
-    return this.companyRepository.save(company);
+    Object.assign(company.data, updateCompanyDto); // company.data because findOne now returns { success, message, data }
+    const updatedCompany = await this.companyRepository.save(company.data);
+    return {
+      success: true,
+      message: 'Company updated successfully',
+      data: updatedCompany,
+    };
   }
 
   // Delete a company by ID
-  async remove(id: number): Promise<void> {
+  async remove(id: number) {
     const company = await this.findOne(id); // will throw if not found
-    await this.companyRepository.remove(company);
+    await this.companyRepository.remove(company.data);
+    return {
+      success: true,
+      message: 'Company deleted successfully',
+      data: null,
+    };
   }
 }
