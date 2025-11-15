@@ -13,8 +13,13 @@ export class ChatbotService {
   async answerQuestion(question: string) {
     const allTables = await this.dbService.getAllTablesData();
 
+    // Updated prompt to be human-readable
     const prompt = `
-You are a helpful assistant. Answer the question using the following database tables:
+You are a friendly and helpful assistant. Answer the user's question in a clear, natural, and easy-to-understand way. 
+Do not just list raw data or technical field names; instead, summarize and explain the information like a human would. 
+Use complete sentences and proper formatting.
+
+Here is the relevant database information:
 
 ${JSON.stringify(allTables, null, 2)}
 
