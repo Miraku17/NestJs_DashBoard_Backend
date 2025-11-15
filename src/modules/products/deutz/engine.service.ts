@@ -17,7 +17,9 @@ export class EngineService {
   // ✅ Create a new engine with company
   async create(dto: CreateEngineDto) {
     // Find company
-    const company = await this.companyRepo.findOne({ where: { id: dto.companyId } });
+    const company = await this.companyRepo.findOne({
+      where: { id: dto.companyId },
+    });
     if (!company) throw new NotFoundException('Company not found');
 
     const engine = this.engineRepo.create({
@@ -36,16 +38,22 @@ export class EngineService {
   // ✅ Get all engines
   async findAll() {
     const engines = await this.engineRepo.find({ relations: ['company'] });
+    const total = await this.engineRepo.count();
+
     return {
       success: true,
       message: 'Engines retrieved successfully',
+      total,
       data: engines,
     };
   }
 
   // ✅ Get a single engine by ID
   async findOne(id: string) {
-    const engine = await this.engineRepo.findOne({ where: { id }, relations: ['company'] });
+    const engine = await this.engineRepo.findOne({
+      where: { id },
+      relations: ['company'],
+    });
     if (!engine) throw new NotFoundException('Engine not found');
     return {
       success: true,
@@ -61,7 +69,9 @@ export class EngineService {
 
     // If updating companyId
     if (dto.companyId) {
-      const company = await this.companyRepo.findOne({ where: { id: dto.companyId } });
+      const company = await this.companyRepo.findOne({
+        where: { id: dto.companyId },
+      });
       if (!company) throw new NotFoundException('Company not found');
       engine.company = company;
       delete dto.companyId; // Remove from dto to avoid assigning to engine directly

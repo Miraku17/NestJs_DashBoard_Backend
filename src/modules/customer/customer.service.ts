@@ -25,9 +25,11 @@ export class CustomerService {
   // Get all customers
   async findAll() {
     const customers = await this.customerRepo.find();
+    const total = await this.customerRepo.count();
     return {
       success: true,
       message: 'Customers retrieved successfully',
+      total,
       data: customers,
     };
   }

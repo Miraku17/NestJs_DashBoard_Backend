@@ -27,9 +27,11 @@ export class CompanyService {
   // Get all companies
   async findAll() {
     const companies = await this.companyRepository.find();
+    const total = await this.companyRepository.count();
     return {
       success: true,
       message: 'Companies retrieved successfully',
+      total,
       data: companies,
     };
   }
