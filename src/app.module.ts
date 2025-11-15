@@ -5,6 +5,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 import { UsersModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -22,11 +24,20 @@ import { CompanyForm } from './modules/company-forms/company-forms.entity';
 import { Form } from './modules/forms/forms.entity';
 
 import { ApiKeyGuard } from './guards/api.key.guard';
-
+import { PdfModule } from './pdf/pdf.module';
 @Module({
   imports: [
+
+
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'src', 'common', 'images'),
+      serveRoot: '/images',
+    }),
+
+    
     ConfigModule.forRoot({ isGlobal: true }),
 
+    
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
@@ -49,6 +60,7 @@ import { ApiKeyGuard } from './guards/api.key.guard';
     CompanyModule,
     CompanyFormsModule,
     FormsModule,
+    PdfModule
   ],
   controllers: [AppController],
   providers: [

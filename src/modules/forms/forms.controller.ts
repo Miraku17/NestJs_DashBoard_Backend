@@ -20,23 +20,20 @@ export class FormsController {
   @Get()
   @ApiOperation({ summary: 'Get all forms with optional filters' })
   @ApiQuery({ name: 'jobOrder', required: false, description: 'Filter by job order', type: String })
-  @ApiQuery({ name: 'companyId', required: false, description: 'Filter by company ID', type: Number })
-  @ApiQuery({ name: 'engineId', required: false, description: 'Filter by engine UUID', type: String })
+  @ApiQuery({ name: 'companyFormId', required: false, description: 'Filter by company form ID', type: String })
   @ApiQuery({ name: 'page', required: false, description: 'Page number', type: Number, example: 1 })
   @ApiQuery({ name: 'limit', required: false, description: 'Number of items per page', type: Number, example: 10 })
   @ApiResponse({ status: 200, description: 'List of forms retrieved successfully' })
   findAll(
     @Query('jobOrder') jobOrder?: string,
-    @Query('companyId') companyId?: string,
-    @Query('engineId') engineId?: string,
+    @Query('companyFormId') companyFormId?: string,
     @Query('page') page = '1',
     @Query('limit') limit = '10',
   ) {
     return this.formsService.findAll(
       {
         jobOrder,
-        companyId: companyId ? parseInt(companyId, 10) : undefined,
-        engineId,
+        companyFormId,
       },
       parseInt(page, 10),
       parseInt(limit, 10),
@@ -52,3 +49,4 @@ export class FormsController {
     return this.formsService.findOne(id);
   }
 }
+ 

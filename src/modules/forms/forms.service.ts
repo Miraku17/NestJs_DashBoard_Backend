@@ -3,10 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Form } from './forms.entity';
 import { CreateFormDto } from './dto/create-form.dto';
-import { Company } from '../companies/company.entity';
 import { CompanyForm } from '../company-forms/company-forms.entity';
-import { Engine } from '../products/deutz/engine.entity';
-import { Customer } from '../customer/customer.entity';
 
 @Injectable()
 export class FormsService {
@@ -14,40 +11,26 @@ export class FormsService {
     @InjectRepository(Form)
     private readonly formRepository: Repository<Form>,
 
-    @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>,
-
     @InjectRepository(CompanyForm)
     private readonly companyFormRepository: Repository<CompanyForm>,
-
-    @InjectRepository(Engine)
-    private readonly engineRepository: Repository<Engine>,
-
-    @InjectRepository(Customer)
-    private readonly customerRepository: Repository<Customer>,
   ) {}
 
   // ✅ Create a new form with auto-generated job order
   async create(dto: CreateFormDto) {
-    const [companyForm, engine, customer] = await Promise.all([
-      this.companyFormRepository.findOne({ where: { id: dto.companyFormId } }),
-      this.engineRepository.findOne({ where: { id: dto.engineId } }),
-      this.customerRepository.findOne({ where: { id: dto.customerId } }),
-    ]);
+    const companyForm = await this.companyFormRepository.findOne({
+      where: { id: dto.companyFormId },
+      relations: ['company'], // company is accessed via companyForm
+    });
 
     if (!companyForm) throw new NotFoundException('CompanyForm template not found');
-    if (!engine) throw new NotFoundException('Engine not found');
-    if (!customer) throw new NotFoundException('Customer not found');
 
     const form = this.formRepository.create({
-      company: companyForm.company,
       companyForm,
-      engine,
-      customer,
       data: dto.data,
     });
 
-    form.job_order = await this.generateJobOrder(form.company.name);
+    // Generate job order using the company name from the template
+    form.job_order = await this.generateJobOrder(companyForm.company.name);
 
     const savedForm = await this.formRepository.save(form);
 
@@ -79,20 +62,18 @@ export class FormsService {
 
   // ✅ Find all forms with filtering, pagination, and sorting
   async findAll(
-    filters: { jobOrder?: string; companyId?: number; engineId?: string } = {},
+    filters: { jobOrder?: string; companyFormId?: string } = {},
     page: number = 1,
     limit: number = 10,
   ) {
-    const query = this.formRepository
-      .createQueryBuilder('form')
-      .leftJoinAndSelect('form.company', 'company')
-      .leftJoinAndSelect('form.engine', 'engine')
-      .leftJoinAndSelect('form.customer', 'customer')
-      .leftJoinAndSelect('form.companyForm', 'companyForm');
+    const query = this.formRepository.createQueryBuilder('form')
+      .leftJoinAndSelect('form.companyForm', 'companyForm'); // only join companyForm if needed
 
-    if (filters.jobOrder) query.andWhere('form.job_order LIKE :jobOrder', { jobOrder: `%${filters.jobOrder}%` });
-    if (filters.companyId) query.andWhere('company.id = :companyId', { companyId: filters.companyId });
-    if (filters.engineId) query.andWhere('engine.id = :engineId', { engineId: filters.engineId });
+    if (filters.jobOrder)
+      query.andWhere('form.job_order LIKE :jobOrder', { jobOrder: `%${filters.jobOrder}%` });
+
+    if (filters.companyFormId)
+      query.andWhere('companyForm.id = :companyFormId', { companyFormId: filters.companyFormId });
 
     const total = await query.getCount();
     const data = await query
@@ -113,14 +94,10 @@ export class FormsService {
 
   // ✅ Find one form by ID
   async findOne(id: string) {
-    const form = await this.formRepository
-      .createQueryBuilder('form')
-      .leftJoinAndSelect('form.company', 'company')
-      .leftJoinAndSelect('form.engine', 'engine')
-      .leftJoinAndSelect('form.customer', 'customer')
-      .leftJoinAndSelect('form.companyForm', 'companyForm')
-      .where('form.id = :id', { id })
-      .getOne();
+    const form = await this.formRepository.findOne({
+      where: { id },
+      relations: ['companyForm'], // include companyForm to access company if needed
+    });
 
     if (!form) throw new NotFoundException(`Form ${id} not found`);
 
