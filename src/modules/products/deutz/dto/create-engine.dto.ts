@@ -1,5 +1,6 @@
 import { IsString, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class CreateEngineDto {
   @ApiProperty({ example: 'Model X1', description: 'Engine model name' })
@@ -76,6 +77,7 @@ export class CreateEngineDto {
 
   // 🔹 Company ID (number)
   @ApiProperty({ example: 1, description: 'ID of the company this engine belongs to' })
-  @IsNumber()
+  @IsNumber()           // ✅ Add this for validation
+  @Type(() => Number)   // ✅ Converts string → number from form-data
   companyId: number;
 }
