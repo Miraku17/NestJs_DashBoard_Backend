@@ -5,14 +5,18 @@ import {
   Body, 
   Param, 
   Delete, 
-  Patch 
+  Patch, 
+  UploadedFile, 
+  UseInterceptors, 
+  ParseIntPipe 
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiConsumes } from '@nestjs/swagger';
 
-@ApiTags('Companies') // 👈 Group all company endpoints
+@ApiTags('Companies')
 @Controller('companies')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
@@ -26,11 +30,13 @@ export class CompanyController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new company' })
-  @ApiBody({ type: CreateCompanyDto })
-  @ApiResponse({ status: 201, description: 'Company created successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid input data' })
-  async create(@Body() createCompanyDto: CreateCompanyDto) {
-    const company = await this.companyService.create(createCompanyDto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image'))
+  async create(
+    @Body() createCompanyDto: CreateCompanyDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    const company = await this.companyService.create(createCompanyDto, file);
     return {
       status: 'success',
       message: 'Company created successfully',
@@ -43,19 +49,25 @@ export class CompanyController {
   @ApiParam({ name: 'id', description: 'Company ID' })
   @ApiResponse({ status: 200, description: 'Company found' })
   @ApiResponse({ status: 404, description: 'Company not found' })
-  findOne(@Param('id') id: number) {
-    return this.companyService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.companyService.findOne(id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a company by ID' })
-  @ApiParam({ name: 'id', description: 'Company ID' })
-  @ApiBody({ type: UpdateCompanyDto })
-  @ApiResponse({ status: 200, description: 'Company updated successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid input data' })
-  @ApiResponse({ status: 404, description: 'Company not found' })
-  update(@Param('id') id: number, @Body() updateCompanyDto: UpdateCompanyDto) {
-    return this.companyService.update(+id, updateCompanyDto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file'))
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    const company = await this.companyService.update(id, updateCompanyDto, file);
+    return {
+      status: 'success',
+      message: 'Company updated successfully',
+      data: company,
+    };
   }
 
   @Delete(':id')
@@ -63,7 +75,7 @@ export class CompanyController {
   @ApiParam({ name: 'id', description: 'Company ID' })
   @ApiResponse({ status: 200, description: 'Company deleted successfully' })
   @ApiResponse({ status: 404, description: 'Company not found' })
-  remove(@Param('id') id: number) {
-    return this.companyService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.companyService.remove(id);
   }
 }
