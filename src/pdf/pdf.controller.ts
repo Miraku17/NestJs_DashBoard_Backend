@@ -12,13 +12,13 @@ export class PdfController {
     private readonly formsService: FormsService,
   ) {}
 
-  @Get('service-report/:id')
+  @Get('report/:id')
   @Header('Content-Type', 'application/pdf')
-  @Header('Content-Disposition', 'attachment; filename=service-report.pdf')
-  @ApiOperation({ summary: 'Generate a service report PDF for a given form ID' })
+  @Header('Content-Disposition', 'attachment; filename=report.pdf')
+  @ApiOperation({ summary: 'Generate a PDF for a given form ID' })
   @ApiParam({
     name: 'id',
-    description: 'UUID of the service report form',
+    description: 'UUID of the form',
     type: 'string',
   })
   @ApiResponse({
@@ -31,11 +31,14 @@ export class PdfController {
     },
   })
   @ApiResponse({ status: 404, description: 'Form not found' })
-  async getServiceReport(
+  async getReport(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<StreamableFile> {
     // 1️⃣ Fetch the form
     const formResponse = await this.formsService.findOne(id);
+    if (!formResponse.success) {
+      throw new Error('Form not found');
+    }
     const form = formResponse.data;
 
     // 2️⃣ Flatten data for Handlebars template
@@ -53,10 +56,21 @@ export class PdfController {
 
     console.log("Template Data:", templateData);
 
-    // 3️⃣ Generate PDF buffer
-    const pdfBuffer = await this.pdfService.generateServiceReportPdf(templateData);
+    // 3️⃣ Determine template based on formType
+    const templateMap = {
+      Service: 'ServiceDeutz',
+      Commission: 'CommissionDeutz',
+    };
+    const templateName = templateMap[form.companyForm.formType];
 
-    // 4️⃣ Convert Buffer to StreamableFile
+    if (!templateName) {
+      throw new Error('Unsupported form type');
+    }
+
+    // 4️⃣ Generate PDF buffer
+    const pdfBuffer = await this.pdfService.generatePdf(templateName, templateData);
+
+    // 5️⃣ Convert Buffer to StreamableFile
     const stream = new Readable();
     stream.push(pdfBuffer);
     stream.push(null);

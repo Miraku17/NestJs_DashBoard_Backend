@@ -7,10 +7,15 @@ import * as pdf from 'html-pdf-node';
 export class PdfService {
   private templatesPath = './src/pdf/templates';
 
-  async generateServiceReportPdf(data: any): Promise<Buffer> {
-    // 1️⃣ Load HTML template
+  /**
+   * Generate PDF from a dynamic template.
+   * @param templateName Name of the template file without extension (e.g., "ServiceDeutz")
+   * @param data Data to populate the template
+   */
+  async generatePdf(templateName: string, data: any): Promise<Buffer> {
+    // 1️⃣ Load HTML template dynamically
     const templateHtml = await fs.readFile(
-      `${this.templatesPath}/ServiceDeutz.html`,
+      `${this.templatesPath}/${templateName}.html`,
       'utf8',
     );
 
