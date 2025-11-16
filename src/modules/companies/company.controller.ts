@@ -56,7 +56,7 @@ export class CompanyController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a company by ID' })
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('image'))
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCompanyDto: UpdateCompanyDto,
