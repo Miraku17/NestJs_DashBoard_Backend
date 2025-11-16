@@ -15,11 +15,27 @@ export class FormsService {
     private readonly companyFormRepository: Repository<CompanyForm>,
   ) {}
 
-  // ✅ Create a new form with auto-generated job order
+  // Deep merge helper for partial update
+  private deepMerge(target: any, source: any) {
+    for (const key of Object.keys(source)) {
+      if (
+        source[key] instanceof Object &&
+        key in target &&
+        target[key] instanceof Object
+      ) {
+        this.deepMerge(target[key], source[key]);
+      } else {
+        target[key] = source[key];
+      }
+    }
+    return target;
+  }
+
+  // Create a new form with auto-generated job order
   async create(dto: CreateFormDto) {
     const companyForm = await this.companyFormRepository.findOne({
       where: { id: dto.companyFormId },
-      relations: ['company'], // company is accessed via companyForm
+      relations: ['company'],
     });
 
     if (!companyForm)
@@ -30,9 +46,7 @@ export class FormsService {
       data: dto.data,
     });
 
-    // Generate job order using the company name from the template
     form.job_order = await this.generateJobOrder(companyForm.company.name);
-
     const savedForm = await this.formRepository.save(form);
 
     return {
@@ -42,7 +56,7 @@ export class FormsService {
     };
   }
 
-  // ✅ Auto-generate job order: PREFIX-YEAR-XXXX
+  // Generate job order: PREFIX-YEAR-XXXX
   private async generateJobOrder(companyName: string): Promise<string> {
     const prefix = companyName.substring(0, 3).toUpperCase();
     const year = new Date().getFullYear();
@@ -54,32 +68,30 @@ export class FormsService {
       .getOne();
 
     const nextNumber =
-      lastForm && lastForm.job_order
+      lastForm?.job_order
         ? parseInt(lastForm.job_order.split('-')[2], 10) + 1
         : 1;
 
     return `${prefix}-${year}-${String(nextNumber).padStart(4, '0')}`;
   }
 
-  // ✅ Find all forms with filtering, pagination, and sorting
-  async findAll(
-    filters: { jobOrder?: string; companyFormId?: string } = {},
-    page: number = 1,
-    limit: number = 10,
-  ) {
+  // Find all with filtering
+  async findAll(filters: { jobOrder?: string; companyFormId?: string } = {}, page = 1, limit = 10) {
     const query = this.formRepository
       .createQueryBuilder('form')
-      .leftJoinAndSelect('form.companyForm', 'companyForm'); // only join companyForm if needed
+      .leftJoinAndSelect('form.companyForm', 'companyForm');
 
-    if (filters.jobOrder)
+    if (filters.jobOrder) {
       query.andWhere('form.job_order LIKE :jobOrder', {
         jobOrder: `%${filters.jobOrder}%`,
       });
+    }
 
-    if (filters.companyFormId)
+    if (filters.companyFormId) {
       query.andWhere('companyForm.id = :companyFormId', {
         companyFormId: filters.companyFormId,
       });
+    }
 
     const total = await query.getCount();
     const data = await query
@@ -98,11 +110,11 @@ export class FormsService {
     };
   }
 
-  // ✅ Find one form by ID
+  // Find one
   async findOne(id: string) {
     const form = await this.formRepository.findOne({
       where: { id },
-      relations: ['companyForm'], // include companyForm to access company if needed
+      relations: ['companyForm'],
     });
 
     if (!form) throw new NotFoundException(`Form ${id} not found`);
@@ -114,13 +126,12 @@ export class FormsService {
     };
   }
 
-  // ✅ Update a form by ID
+  // Update (FULL partial update support)
   async update(id: string, dto: Partial<CreateFormDto>) {
-    // Find the existing form
-    const formResp = await this.findOne(id); // returns { success, message, data }
+    const formResp = await this.findOne(id);
     const form = formResp.data;
 
-    // If updating companyFormId, find the new CompanyForm
+    // Updating companyFormId?
     if (dto.companyFormId) {
       const companyForm = await this.companyFormRepository.findOne({
         where: { id: dto.companyFormId },
@@ -131,16 +142,14 @@ export class FormsService {
         throw new NotFoundException('CompanyForm template not found');
 
       form.companyForm = companyForm;
-
-      // Optionally, regenerate job_order if template changes
       form.job_order = await this.generateJobOrder(companyForm.company.name);
 
-      delete dto.companyFormId; // remove so we don’t overwrite accidentally
+      delete dto.companyFormId;
     }
 
-    // Update form data
+    // Partial update of nested JSON
     if (dto.data) {
-      form.data = dto.data;
+      form.data = this.deepMerge(form.data ?? {}, dto.data);
     }
 
     const updatedForm = await this.formRepository.save(form);
@@ -152,13 +161,11 @@ export class FormsService {
     };
   }
 
-  // ✅ Delete a form by ID
+  // Delete
   async remove(id: string) {
-    // Find the existing form
-    const formResp = await this.findOne(id); // returns { success, message, data }
+    const formResp = await this.findOne(id);
     const form = formResp.data;
 
-    // Remove the form from the database
     await this.formRepository.remove(form);
 
     return {

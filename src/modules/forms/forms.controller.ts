@@ -1,13 +1,32 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  Query,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { FormsService } from './forms.service';
 import { CreateFormDto } from './dto/create-form.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+  ApiQuery,
+} from '@nestjs/swagger';
 
 @ApiTags('Forms')
 @Controller('forms')
 export class FormsController {
   constructor(private readonly formsService: FormsService) {}
 
+  // ✅ Create a new form
   @Post()
   @ApiOperation({ summary: 'Create a new form' })
   @ApiBody({ type: CreateFormDto })
@@ -17,6 +36,7 @@ export class FormsController {
     return this.formsService.create(dto);
   }
 
+  // ✅ Get all forms with optional filters
   @Get()
   @ApiOperation({ summary: 'Get all forms with optional filters' })
   @ApiQuery({ name: 'jobOrder', required: false, description: 'Filter by job order', type: String })
@@ -31,15 +51,13 @@ export class FormsController {
     @Query('limit') limit = '10',
   ) {
     return this.formsService.findAll(
-      {
-        jobOrder,
-        companyFormId,
-      },
+      { jobOrder, companyFormId },
       parseInt(page, 10),
       parseInt(limit, 10),
     );
   }
 
+  // ✅ Get one form by ID
   @Get(':id')
   @ApiOperation({ summary: 'Get a form by ID' })
   @ApiParam({ name: 'id', description: 'Form UUID' })
@@ -49,15 +67,26 @@ export class FormsController {
     return this.formsService.findOne(id);
   }
 
-  // ✅ Update a form
+  // ✅ Full update (PUT)
   @Put(':id')
-  @ApiOperation({ summary: 'Update a form by ID' })
+  @ApiOperation({ summary: 'Fully update a form by ID' })
   @ApiParam({ name: 'id', description: 'Form UUID' })
   @ApiBody({ type: CreateFormDto })
   @ApiResponse({ status: 200, description: 'Form updated successfully' })
   @ApiResponse({ status: 404, description: 'Form not found' })
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: Partial<CreateFormDto>) {
     return this.formsService.update(id, dto);
+  }
+
+  // ✅ Partial update (PATCH)
+  @Patch(':id')
+  @ApiOperation({ summary: 'Partially update a form by ID' })
+  @ApiParam({ name: 'id', description: 'Form UUID' })
+  @ApiBody({ type: CreateFormDto, required: false })
+  @ApiResponse({ status: 200, description: 'Form partially updated successfully' })
+  @ApiResponse({ status: 404, description: 'Form not found' })
+  partialUpdate(@Param('id', ParseUUIDPipe) id: string, @Body() dto: Partial<CreateFormDto>) {
+    return this.formsService.update(id, dto); // uses deep merge for partial update
   }
 
   // ✅ Delete a form
