@@ -22,7 +22,8 @@ export class FormsService {
       relations: ['company'], // company is accessed via companyForm
     });
 
-    if (!companyForm) throw new NotFoundException('CompanyForm template not found');
+    if (!companyForm)
+      throw new NotFoundException('CompanyForm template not found');
 
     const form = this.formRepository.create({
       companyForm,
@@ -66,14 +67,19 @@ export class FormsService {
     page: number = 1,
     limit: number = 10,
   ) {
-    const query = this.formRepository.createQueryBuilder('form')
+    const query = this.formRepository
+      .createQueryBuilder('form')
       .leftJoinAndSelect('form.companyForm', 'companyForm'); // only join companyForm if needed
 
     if (filters.jobOrder)
-      query.andWhere('form.job_order LIKE :jobOrder', { jobOrder: `%${filters.jobOrder}%` });
+      query.andWhere('form.job_order LIKE :jobOrder', {
+        jobOrder: `%${filters.jobOrder}%`,
+      });
 
     if (filters.companyFormId)
-      query.andWhere('companyForm.id = :companyFormId', { companyFormId: filters.companyFormId });
+      query.andWhere('companyForm.id = :companyFormId', {
+        companyFormId: filters.companyFormId,
+      });
 
     const total = await query.getCount();
     const data = await query
@@ -105,6 +111,60 @@ export class FormsService {
       success: true,
       message: 'Form retrieved successfully',
       data: form,
+    };
+  }
+
+  // ✅ Update a form by ID
+  async update(id: string, dto: Partial<CreateFormDto>) {
+    // Find the existing form
+    const formResp = await this.findOne(id); // returns { success, message, data }
+    const form = formResp.data;
+
+    // If updating companyFormId, find the new CompanyForm
+    if (dto.companyFormId) {
+      const companyForm = await this.companyFormRepository.findOne({
+        where: { id: dto.companyFormId },
+        relations: ['company'],
+      });
+
+      if (!companyForm)
+        throw new NotFoundException('CompanyForm template not found');
+
+      form.companyForm = companyForm;
+
+      // Optionally, regenerate job_order if template changes
+      form.job_order = await this.generateJobOrder(companyForm.company.name);
+
+      delete dto.companyFormId; // remove so we don’t overwrite accidentally
+    }
+
+    // Update form data
+    if (dto.data) {
+      form.data = dto.data;
+    }
+
+    const updatedForm = await this.formRepository.save(form);
+
+    return {
+      success: true,
+      message: 'Form updated successfully',
+      data: updatedForm,
+    };
+  }
+
+  // ✅ Delete a form by ID
+  async remove(id: string) {
+    // Find the existing form
+    const formResp = await this.findOne(id); // returns { success, message, data }
+    const form = formResp.data;
+
+    // Remove the form from the database
+    await this.formRepository.remove(form);
+
+    return {
+      success: true,
+      message: 'Form deleted successfully',
+      data: null,
     };
   }
 }

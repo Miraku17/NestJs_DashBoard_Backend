@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Query, ParseUUIDPipe } from '@nestjs/common';
 import { FormsService } from './forms.service';
 import { CreateFormDto } from './dto/create-form.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
@@ -48,5 +48,25 @@ export class FormsController {
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.formsService.findOne(id);
   }
+
+  // ✅ Update a form
+  @Put(':id')
+  @ApiOperation({ summary: 'Update a form by ID' })
+  @ApiParam({ name: 'id', description: 'Form UUID' })
+  @ApiBody({ type: CreateFormDto })
+  @ApiResponse({ status: 200, description: 'Form updated successfully' })
+  @ApiResponse({ status: 404, description: 'Form not found' })
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: Partial<CreateFormDto>) {
+    return this.formsService.update(id, dto);
+  }
+
+  // ✅ Delete a form
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a form by ID' })
+  @ApiParam({ name: 'id', description: 'Form UUID' })
+  @ApiResponse({ status: 200, description: 'Form deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Form not found' })
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.formsService.remove(id);
+  }
 }
- 
