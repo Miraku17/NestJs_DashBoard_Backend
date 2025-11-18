@@ -1,4 +1,11 @@
-import { Controller, Get, Param, ParseUUIDPipe, Header, StreamableFile } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Header,
+  StreamableFile,
+} from '@nestjs/common';
 import { PdfService } from './pdf.service';
 import { Readable } from 'stream';
 import { FormsService } from 'src/modules/forms/forms.service';
@@ -45,16 +52,27 @@ export class PdfController {
     const templateData = {
       job_order: form.job_order,
       dateCreated: form.dateCreated,
+
       basicInformation: form.data.basicInformation || {},
       engineInformation: form.data.engineInformation || {},
+
+      // Newly added sections
+      inspection: form.data.inspection || {},
+      testRun: form.data.testRun || '',
+      engineParameters: form.data.engineParameters || {},
+      parts: form.data.parts || {},
+      remarks: form.data.remarks || '',
+      recommendation: form.data.recommendation || '',
+
       serviceDetails: form.data.serviceDetails || {},
       warrantyCoverage: form.data.warrantyCoverage || {},
       serviceSummary: form.data.servicesSummary || {},
       signatures: form.data.signatures || {},
+
       companyForm: form.companyForm || {},
     };
 
-    console.log("Template Data:", templateData);
+    console.log('Template Data:', templateData);
 
     // 3️⃣ Determine template based on formType
     const templateMap = {
@@ -68,7 +86,10 @@ export class PdfController {
     }
 
     // 4️⃣ Generate PDF buffer
-    const pdfBuffer = await this.pdfService.generatePdf(templateName, templateData);
+    const pdfBuffer = await this.pdfService.generatePdf(
+      templateName,
+      templateData,
+    );
 
     // 5️⃣ Convert Buffer to StreamableFile
     const stream = new Readable();
