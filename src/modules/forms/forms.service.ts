@@ -117,6 +117,8 @@ export class FormsService {
       relations: ['companyForm'],
     });
 
+    console.log("This is running");
+
     if (!form) throw new NotFoundException(`Form ${id} not found`);
 
     return {

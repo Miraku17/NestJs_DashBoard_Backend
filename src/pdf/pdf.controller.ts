@@ -46,6 +46,8 @@ export class PdfController {
     if (!formResponse.success) {
       throw new Error('Form not found');
     }
+
+    console.log('Form Response1', formResponse);
     const form = formResponse.data;
 
     // 2️⃣ Flatten data for Handlebars template
@@ -57,7 +59,7 @@ export class PdfController {
       engineInformation: form.data.engineInformation || {},
 
       // Newly added sections
-      inspection: form.data.inspection || {},
+      inspection: form.data.inspectionPriorToTest || {},
       testRun: form.data.testRun || '',
       engineParameters: form.data.engineParameters || {},
       parts: form.data.parts || {},
@@ -76,10 +78,11 @@ export class PdfController {
 
     // 3️⃣ Determine template based on formType
     const templateMap = {
-      Service: 'ServiceDeutz',
-      Commission: 'CommissionDeutz',
+      service: 'ServiceDeutz',
+      commission: 'CommissionDeutz',
     };
-    const templateName = templateMap[form.companyForm.formType];
+
+    const templateName = templateMap[form.companyForm.formType.toLowerCase()];
 
     if (!templateName) {
       throw new Error('Unsupported form type');
